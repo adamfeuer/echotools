@@ -25,12 +25,9 @@ def main():
 
     try:
         # Send data
-        #message = bytes('This is the message.  It will be repeated.', encoding='utf-8')
         for i in range(0, messages):
-            #message_size += 1
-            message = bytes('a' * message_size, encoding='utf-8')
+            message = bytes('a' * (message_size-1) + '\n', encoding='utf-8')
             print(f'{i}: message_size: {message_size}', file=sys.stderr)
-            #print(f'{i}: sending "{message}"', file=sys.stderr)
 
             sock.sendall(message)
 
@@ -42,14 +39,19 @@ def main():
             sys.stderr.flush()
 
             received_packets = 0
+            received_data = bytes("", encoding='utf-8')
             while amount_received < amount_expected:
-                data = sock.recv(16)
+                data = sock.recv(64)
+                received_data += data
                 amount_received += len(data)
-                #print(f'received "{data}"', file=sys.stderr)
-                print('.', file=sys.stderr, end='')
-                sys.stderr.flush()
+                #print('.', file=sys.stderr, end='')
+                #sys.stderr.flush()
                 received_packets += 1
             print(f' :{received_packets}', file=sys.stderr)
+            if amount_expected != amount_received:
+                print(f'*** Did not receive the right number of bytes! Should have gotten {amount_expected}, but got {amount_received}.', file=sys.stderr)
+            if message != received_data: 
+                print(f'*** Did not receive the correct data!', file=sys.stderr)
             sys.stderr.flush()
 
     finally:
