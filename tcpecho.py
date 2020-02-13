@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# tcpecho commandline client
+# useful for debugging tcp connection or bandwidth problems
+
 import socket
 import sys
 import argparse
@@ -15,21 +18,27 @@ def main():
                     type=int, default=1)
     parser.add_argument("-r", "--receive-size", help="number of bytes to receive at once (default: %(default)s)",
                     type=int, default=64)
+    parser.add_argument("host", help="name or IP address of host to contact",
+                    type=str, default=64)
+    parser.add_argument("-p", "--port", help="port to contact (default: %(default)s)",
+                    type=int, default=80)
     parser.add_argument("-v", "--verbose", help="verbose mode (prints packet received indicator dots)",
                     action="store_true")
     args = parser.parse_args()
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Connect the socket to the port where the server is listening
-    server_address = ('10.0.0.2', 80)
-    print('connecting to %s port %s' % server_address, file=sys.stderr)
-    sock.connect(server_address)
-
     messages = args.number_of_messages
     message_size = args.message_size
     receive_size = args.receive_size
     verbose = args.verbose
+    host = args.host
+    port = args.port
+
+    # Connect the socket to the port where the server is listening
+    server_address = (host, port)
+    print('connecting to %s port %s' % server_address, file=sys.stderr)
+    sock.connect(server_address)
 
     try:
         # Send data
