@@ -46,7 +46,9 @@ def main():
             message_str = sequence_header + ''.join([random.choice(string.ascii_letters + string.digits) for n in range(message_size - len(sequence_header))])
             message = bytes (message_str, encoding='utf-8')
             print(f'{i}: message_size: {message_size}', file=sys.stderr)
-
+            if verbose:
+                print(message)
+    
             sock.sendto(message, server_address)
 
             # Look for the response
@@ -64,6 +66,7 @@ def main():
                 amount_received += len(data)
                 if verbose:
                     print('.', file=sys.stderr, end='')
+                    print(data)
                     sys.stderr.flush()
                 received_packets += 1
             print(f' :{received_packets}', file=sys.stderr)
