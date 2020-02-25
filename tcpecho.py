@@ -8,6 +8,7 @@ import sys
 import argparse
 import random
 import string
+import time
 
 def main():
     import argparse
@@ -18,6 +19,8 @@ def main():
                     type=int, default=1)
     parser.add_argument("-r", "--receive-size", help="number of bytes to receive at once (default: %(default)s)",
                     type=int, default=64)
+    parser.add_argument("-d", "--delay", help="number of milliseconds to delay between sends (default: %(default)s)",
+                    type=int, default=0)
     parser.add_argument("host", help="name or IP address of host to contact",
                     type=str, default=64)
     parser.add_argument("-p", "--port", help="port to contact (default: %(default)s)",
@@ -31,6 +34,7 @@ def main():
     messages = args.number_of_messages
     message_size = args.message_size
     receive_size = args.receive_size
+    delay = args.delay / 1000.0
     verbose = args.verbose
     host = args.host
     port = args.port
@@ -73,6 +77,7 @@ def main():
                 print(f'expected: {message}')
                 print(f'received: {received_data}')
             sys.stderr.flush()
+            time.sleep(delay)
 
     finally:
         print('closing socket', file=sys.stderr)
